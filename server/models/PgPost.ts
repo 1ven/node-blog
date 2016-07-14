@@ -3,9 +3,8 @@ class PgPost implements Post {
   private props: {
     id: number,
   };
-  // Implement caching
 
-  constructor(dbase, id: number) {
+  constructor(dbase, id: number, cached: object) {
     this.dbase = dbase;
     this.props = {
       id,
@@ -34,3 +33,22 @@ class PgPost implements Post {
 }
 
 export default PgPost;
+
+class CachedPgPost extends PgPost {
+  post: Post;
+  cached: object;
+
+  constructor(post: Post, cached: object) {
+    super();
+    this.post = post;
+    this.cached = cached;
+  }
+
+  public async title() {
+    if (this.cached.title) {
+      return this.cached.title;
+    }
+
+    return await this.post.title();
+  }
+}
